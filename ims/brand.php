@@ -13,13 +13,11 @@ $inventory->checkLogin();
 <script src="js/brand.js"></script>
 <script src="js/common.js"></script>
 <?php include('inc/container.php');?>
-
-<div class="container-fluid">			
+<div class="container">		
+		
+	<?php include("menus.php"); ?> 	
 	<div class="row">
-		<div class="col-lg-2">
-			<?php include("menus.php"); ?> 
-		</div>
-		<div class="col-lg-9" style ="padding-top: 50px">
+		<div class="col-lg-12">
 			<div class="card card-default rounded-0 shadow">
                 <div class="card-header">
                 	<div class="row">
@@ -78,5 +76,4 @@ $inventory->checkLogin();
     	</div>
     </div>
 </div>	
-
 <?php include('inc/footer.php');?>
