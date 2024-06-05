@@ -13,6 +13,10 @@ $inventory->checkLogin();
 <link rel="stylesheet" href="css/style.css" />
 <script src="js/product.js"></script>
 <script src="js/common.js"></script>
+
+<style>
+	
+</style>
 <?php include('inc/container.php');?>
 
 <div class="container-fluid">			
@@ -37,11 +41,12 @@ $inventory->checkLogin();
 						<div class="col-sm-12 table-responsive">
 							<table id="productList" class="table table-bordered table-striped">
 								<thead>
-									<tr>   
+									<tr>
+										<th>ID</th>      
 										<th>Category</th>	
 										<th>Brand Name</th>									
 										<th>Product Name</th>
-										<th>Expiration Date</th>
+										<th>Product Model</th>
 										<th>Quantity</th>
 										<th>Status</th>
 										<th>Action</th>
@@ -85,7 +90,7 @@ $inventory->checkLogin();
 						</div>
 						<div class="form-group">
 							<label>Product Model</label>
-							<input type="date" name="date" id="date" class="form-control rounded-0" required />
+							<input type="text" name="pmodel" id="pmodel" class="form-control rounded-0" required />
 						</div>
 						<div class="form-group">
 							<label>Product Description</label>
@@ -140,51 +145,3 @@ $inventory->checkLogin();
 </div>	
 
 <?php include('inc/footer.php');?>
-
-<style>
-html,
-body {
-    height: 100%;
-    background-color: white; /* White background color */
-}
-
-.navbar {
-    background-color: #ff9900 !important; /* White background color */
-}
-
-.card-header {
-    background-color: #ff9900; /* Orange background color */
-}
-
-.card-title {
-    color: #ff9900; /* Orange font color */
-}
-
-.btn-primary {
-    background-color: #ff9900; /* Orange background color */
-    border-color: #ff9900; /* Orange border color */
-}
-
-.btn-primary:hover {
-    background-color: #e68a00; /* Darker orange on hover */
-    border-color: #e68a00; /* Darker orange on hover */
-}
-
-.btn-close {
-    color: #ff9900; /* Orange close button */
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: rgba(255, 153, 0, 0.1); /* Light orange stripes */
-}
-
-.table-striped tbody tr:hover {
-    background-color: rgba(255, 153, 0, 0.3); /* Darker orange on hover */
-}
-
-.navbar-brand {
-    font-size: 24px;
-    font-weight: bold;
-    color: #ff9900; /* Orange font color */
-}
-</style>

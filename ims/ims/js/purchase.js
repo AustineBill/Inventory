@@ -12,12 +12,12 @@ $(document).ready(function() {
         },
         "pageLength": 10,
         "columnDefs": [{
-            "target": [0, 3],
+            "target": [0, 4],
             "orderable": false
         }],
         'rowCallback': function(row, data, index) {
             $(row).find('td').addClass('align-middle')
-            $(row).find('td:eq(0), td:eq(3)').addClass('text-center')
+            $(row).find('td:eq(0), td:eq(4)').addClass('text-center')
         },
     });
 

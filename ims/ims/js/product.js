@@ -1,11 +1,9 @@
 $(document).ready(function() {
     const categoryUnits = {
-        
+        'Medicine': ['Grams', 'Box', 'Tablets', 'Pieces'],
         'Beverages': ['Ml', 'Liters', 'Packets', 'Bottles'],
-        'Snacks': ['Small-size', 'Medium-size', 'Large-size'],
-        'Drinks': ['Small-size', 'Medium-size', 'Large-size'],
-        'Food': ['Small-size', 'Medium-size', 'Large-size', 'ExtraLarge-size'],
-        
+        'Electronics': ['Pieces', 'Box', 'Units'],
+        'Food': ['Small-size', 'Medium-size', 'Large-size', 'Pieces', 'Slices'],
     };
 
     $('#addProduct').click(function() {
@@ -30,7 +28,7 @@ $(document).ready(function() {
             dataType: "json"
         },
         "columnDefs": [{
-            "targets": [0, 6],
+            "targets": [0, 7],
             "orderable": false,
         }],
         "pageLength": 9,

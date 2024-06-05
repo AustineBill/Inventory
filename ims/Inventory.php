@@ -30,18 +30,19 @@ class Inventory {
 	private function getData($sqlQuery) {
 		$result = mysqli_query($this->dbConnect, $sqlQuery);
 		if(!$result){
-			die('Error in query: '. mysqli_error());
+			die('Error in query: '. mysqli_error($this->dbConnect)); // Pass the connection as an argument
 		}
-		$data= array();
+		$data = array();
 		while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-			$data[]=$row;            
+			$data[] = $row;
 		}
 		return $data;
 	}
+	
 	private function getNumRows($sqlQuery) {
 		$result = mysqli_query($this->dbConnect, $sqlQuery);
 		if(!$result){
-			die('Error in query: '. mysqli_error());
+			die('Error in query: '. mysqli_error($this->dbConnect)); // Pass the connection as an argument
 		}
 		$numRows = mysqli_num_rows($result);
 		return $numRows;
@@ -190,7 +191,7 @@ class Inventory {
 			} else {
 				$status = '<span class="label label-danger">Inactive</span>';
 			}
-			$categoryRows[] = $category['categoryid'];
+			
 			$categoryRows[] = $category['name'];
 			$categoryRows[] = $status;			
 			$categoryRows[] = '<button type="button" name="update" id="'.$category["categoryid"].'" class="btn btn-primary btn-sm rounded-0 update" title="Update"><i class="fa fa-edit"></i></button><button type="button" name="delete" id="'.$category["categoryid"].'" class="btn btn-danger btn-sm rounded-0 delete"  title="Delete"><i class="fa fa-trash"></i></button>';
@@ -263,9 +264,9 @@ class Inventory {
 				$status = '<span class="label label-danger">Inactive</span>';
 			}
 			$brandRows = array();
-			$brandRows[] = $brand['id'];
-			$brandRows[] = $brand['bname'];
+			
 			$brandRows[] = $brand['name'];
+			$brandRows[] = $brand['bname'];
 			$brandRows[] = $status;
 			$brandRows[] = '<button type="button" name="update" id="'.$brand["id"].'" class="btn btn-primary btn-sm rounded-0  update" title="Update"><i class="fa fa-edit"></i></button><button type="button" name="delete" id="'.$brand["id"].'" class="btn btn-danger btn-sm rounded-0  delete" data-status="'.$brand["status"].'" title="Delete"><i class="fa fa-trash"></i></button>';
 			$brandData[] = $brandRows;
@@ -299,7 +300,7 @@ class Inventory {
 	public function getBrand(){
 		$sqlQuery = "
 			SELECT * FROM ".$this->brandTable." 
-			WHERE id = '".$_POST["id"]."'";
+			WHERE id = '".$_POST["name"]."'";
 		$result = mysqli_query($this->dbConnect, $sqlQuery);	
 		$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 		echo json_encode($row);
@@ -317,6 +318,32 @@ class Inventory {
 			WHERE id = '".$_POST["id"]."'";	
 		mysqli_query($this->dbConnect, $sqlQuery);		
 	}
+
+
+
+	public function getCategoryBrand($categoryid){	
+		$sqlQuery = "SELECT * FROM ".$this->brandTable." 
+			WHERE status = 'active' AND categoryid = '".$categoryid."'	ORDER BY bname ASC";
+		$result = mysqli_query($this->dbConnect, $sqlQuery);
+		$dropdownHTML = '';
+		while( $brand = mysqli_fetch_assoc($result) ) {	
+			$dropdownHTML .= '<option value="'.$brand["id"].'">'.$brand["bname"].'</option>';
+		}
+		return $dropdownHTML;
+	}
+
+	public function supplierDropdownList(){	
+		
+		$sqlQuery = "SELECT * FROM ".$this->supplierTable." 
+			WHERE status = 'active'	ORDER BY supplier_name ASC";
+		$result = mysqli_query($this->dbConnect, $sqlQuery);
+		$dropdownHTML = '';
+		while( $supplier = mysqli_fetch_assoc($result) ) {	
+			$dropdownHTML .= '<option value="'.$supplier["supplier_id"].'">'.$supplier["supplier_name"].'</option>';
+		}
+		return $dropdownHTML;
+	}
+	
 
 	// Product management 
 	public function getProductList() {
@@ -362,7 +389,6 @@ class Inventory {
 				'<span class="label label-danger">Inactive</span>';
 	
 			$productRow = array();
-			$productRow[] = $product['pid'];
 			$productRow[] = $product['category_name'];
 			$productRow[] = $product['bname'];
 			$productRow[] = $product['pname'];
@@ -383,28 +409,6 @@ class Inventory {
 		echo json_encode($outputData);
 	}
 	
-	public function getCategoryBrand($categoryid){	
-		$sqlQuery = "SELECT * FROM ".$this->brandTable." 
-			WHERE status = 'active' AND categoryid = '".$categoryid."'	ORDER BY bname ASC";
-		$result = mysqli_query($this->dbConnect, $sqlQuery);
-		$dropdownHTML = '';
-		while( $brand = mysqli_fetch_assoc($result) ) {	
-			$dropdownHTML .= '<option value="'.$brand["id"].'">'.$brand["bname"].'</option>';
-		}
-		return $dropdownHTML;
-	}
-
-	public function supplierDropdownList(){	
-		
-		$sqlQuery = "SELECT * FROM ".$this->supplierTable." 
-			WHERE status = 'active'	ORDER BY supplier_name ASC";
-		$result = mysqli_query($this->dbConnect, $sqlQuery);
-		$dropdownHTML = '';
-		while( $supplier = mysqli_fetch_assoc($result) ) {	
-			$dropdownHTML .= '<option value="'.$supplier["supplier_id"].'">'.$supplier["supplier_name"].'</option>';
-		}
-		return $dropdownHTML;
-	}
 	
 	public function addProduct() {		
 		$sqlInsert = "
@@ -420,7 +424,7 @@ class Inventory {
 
 		$result = mysqli_query($this->dbConnect, $sqlQuery);			
 		while( $product = mysqli_fetch_assoc($result)) {
-			$output['pid'] = $product['pid'];
+			
 			$output['categoryid'] = $product['categoryid'];
 			$output['brandid'] = $product['brandid'];
 			$output["brand_select_box"] = $this->getCategoryBrand($product['categoryid']);
@@ -537,7 +541,7 @@ class Inventory {
 				$status = '<span class="label label-danger">Inactive</span>';
 			}
 			$supplierRows = array();
-			$supplierRows[] = $supplier['supplier_id'];		
+			
 			$supplierRows[] = $supplier['supplier_name'];	
 			$supplierRows[] = $supplier['mobile'];			
 			$supplierRows[] = $supplier['address'];	
@@ -601,7 +605,6 @@ class Inventory {
 		$purchaseData = array();	
 		while( $purchase = mysqli_fetch_assoc($result) ) {			
 			$productRow = array();
-			$productRow[] = $purchase['purchase_id'];
 			$productRow[] = $purchase['pname'];
 			$productRow[] = $purchase['quantity'];			
 			$productRow[] = $purchase['supplier_name'];			
@@ -674,7 +677,7 @@ class Inventory {
 		$orderData = array();
 		while ($order = mysqli_fetch_assoc($result)) {
 			$orderRow = array();
-			$orderRow[] = $order['order_id'];
+			//$orderRow[] = $order['order_id'];
 			$orderRow[] = $order['pname'];
 			$orderRow[] = $order['total_shipped'];
 			$orderRow[] = $order['date'];
@@ -759,16 +762,24 @@ class Inventory {
 			}
 			
 			$inventoryInHand = ($inventory['product_quantity'] + $inventory['recieved_quantity']) - $inventory['total_shipped'];
+
+
+			$expirationDate = strtotime('+5 days');
+			$expirationMessage = '';
+			if ($inventory['model'] != null && strtotime($inventory['model']) <= $expirationDate) {
+				$expirationMessage = 'Expiration date is within 5 days.';
+			}
 		
 			$inventoryRow = array();
 			$inventoryRow[] = $i++;
-			$inventoryRow[] = "<div class='lh-1'><div>{$inventory['pname']}</div><div class='fw-bolder text-muted'><small>{$inventory['model']}</small></div></div>";
-			// $inventoryRow[] = $inventory['pname'];
-			// $inventoryRow[] = $inventory['model'];
+			//$inventoryRow[] = "<div class='lh-1'><div>{$inventory['pname']}</div><div class='fw-bolder text-muted'><small>{$inventory['model']}</small></div></div>";
+			$inventoryRow[] = $inventory['pname'];
+			$inventoryRow[] = $inventory['model'];
 			$inventoryRow[] = $inventory['product_quantity'];
 			$inventoryRow[] = $inventory['recieved_quantity'];	
 			$inventoryRow[] = $inventory['total_shipped'];
-			$inventoryRow[] = $inventoryInHand;			
+			$inventoryRow[] = $inventoryInHand;		
+				
 			$inventoryData[] = $inventoryRow;						
 		}
 		$output = array(
@@ -777,7 +788,13 @@ class Inventory {
 			"recordsFiltered" 	=> 	$numRows,
 			"data"    			=> 	$inventoryData
 		);
-		echo json_encode($output);		
+		echo json_encode($output);	
+
+		if (!empty($productsToAlert)) {
+			echo "<script>alert('The following products have expiration dates within 5 days: " . implode(', ', $productsToAlert) . "');</script>";
+		}
 	}
+
+	
 }
 ?>

@@ -9,12 +9,18 @@ $inventory->checkLogin();
 <script src="js/jquery.dataTables.min.js"></script>
 <script src="js/dataTables.bootstrap.min.js"></script>		
 <link rel="stylesheet" href="css/dataTables.bootstrap.min.css" />
+<link rel="stylesheet" href="css/style.css" />
 <script src="js/common.js"></script>
+
+
 <?php include('inc/container.php');?>
-<div class="container">		
-	<?php include("menus.php"); ?>   
+
+<div class="container-fluid">			
 	<div class="row">
-		<div class="col-lg-12">
+		<div class="col-lg-2">
+			<?php include("menus.php"); ?> 
+		</div>
+		<div class="col-lg-9" style ="padding-top: 50px">
 			<div class="card card-default rounded-0 shadow">
 				<div class="card-header">
 					<div class="row">
@@ -30,7 +36,7 @@ $inventory->checkLogin();
 								<th>#</th>      
 								<th>Product/Code</th>      
 								<th>Starting Inventory</th> 
-								<th>Inventory Recieved</th> 									
+								<th>Inventory Received</th> 									
 								<th>Inventory Shipped</th>
 								<th>Inventory on Hand</th>								
 							</tr></thead>
@@ -42,7 +48,9 @@ $inventory->checkLogin();
 	</div>
 		
 </div>	
-<?php include('inc/footer.php');?>
+
+
+
 
 
 

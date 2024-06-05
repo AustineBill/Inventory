@@ -6,14 +6,16 @@ include 'Inventory.php';
 $inventory = new Inventory();
 $inventory->checkLogin();
 ?>
+
 <script src="js/jquery.dataTables.min.js"></script>
 <script src="js/dataTables.bootstrap.min.js"></script>		
 <link rel="stylesheet" href="css/dataTables.bootstrap.min.css" />
-<link rel="stylesheet" href="css/style.css" />
+<script src="js/brand.js"></script>
 <script src="js/common.js"></script>
-
-
 <?php include('inc/container.php');?>
+
+
+
 
 <div class="container-fluid">			
 	<div class="row">
@@ -30,11 +32,12 @@ $inventory->checkLogin();
 					</div>
 				</div>
 				<div class="card-body">
-					<div class="row"><div class="col-sm-12 table-responsive">
+					<div class="row"><div class="col-sm-13 table-responsive">
 						<table id="inventoryDetails" class="table table-bordered table-striped">
 							<thead><tr>
 								<th>#</th>      
 								<th>Product/Code</th>      
+								<th>Expiration </th>      
 								<th>Starting Inventory</th> 
 								<th>Inventory Recieved</th> 									
 								<th>Inventory Shipped</th>
@@ -49,6 +52,17 @@ $inventory->checkLogin();
 		
 </div>	
 
+<style>
+html,
+.card-header {
+    background-color: #ff9900; /* Orange background color */
+}
+
+body {
+    height: 100%;
+    background-color: white; /* White background color */
+}
+</style>
 
 
 

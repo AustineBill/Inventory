@@ -25,7 +25,7 @@ $inventory->checkLogin();
                     <div class="card-header">
                     	<div class="row">
                             <div class="col-lg-10 col-md-10 col-sm-8 col-xs-6">
-                            	<h3 class="card-title">Manage Orders</h3>
+                            	<h3 class="card-title" style="color: white;"><i class="fas fa-receipt"></i>Manage Orders</h3>
                             </div>
                         
                             <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6 text-end">
@@ -37,7 +37,6 @@ $inventory->checkLogin();
                         <div class="row"><div class="col-sm-12 table-responsive">
                             <table id="orderList" class="table table-bordered table-striped">
                                 <thead><tr>
-                                    <th>ID</th>      
 									<th>Product</th>	
 									<th>Total Item</th> 
 									<th>Date</th> 									
@@ -77,7 +76,7 @@ $inventory->checkLogin();
 
                                 <div class="mb-3">
                                     <label class="control-label"> Date </label>
-                                    <input type="text" name="date" id="date" class="form-control rounded-0" required />
+                                    <input type="date" name="date" id="date" class="form-control rounded-0" required />
                                 </div>
 
                             </form>
@@ -90,3 +89,51 @@ $inventory->checkLogin();
             </div>
         </div>
 </div>	
+
+<style>
+html,
+body {
+    height: 100%;
+    background-color: white; /* White background color */
+}
+
+.navbar {
+    background-color: #ff9900 !important; /* White background color */
+}
+
+.card-header {
+    background-color: #ff9900; /* Orange background color */
+}
+
+.card-title {
+    color: #ff9900; /* Orange font color */
+}
+
+.btn-primary {
+    background-color: #ff9900; /* Orange background color */
+    border-color: #ff9900; /* Orange border color */
+}
+
+.btn-primary:hover {
+    background-color: #e68a00; /* Darker orange on hover */
+    border-color: #e68a00; /* Darker orange on hover */
+}
+
+.btn-close {
+    color: #ff9900; /* Orange close button */
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 153, 0, 0.1); /* Light orange stripes */
+}
+
+.table-striped tbody tr:hover {
+    background-color: rgba(255, 153, 0, 0.3); /* Darker orange on hover */
+}
+
+.navbar-brand {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ff9900; /* Orange font color */
+}
+</style>

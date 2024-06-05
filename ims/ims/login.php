@@ -24,6 +24,7 @@ if (!empty($_POST['email']) && !empty($_POST['pwd'])) {
 }
 ?>
 
+
 <style>
 html,
 body {
@@ -35,8 +36,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url('background.jpg') no-repeat center center fixed;
-    background-size: cover;
+    background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.25));
 }
 
 #title {
@@ -52,10 +52,11 @@ body {
 }
 
 .footer {
+   
     color: white;
     width: 100%;
     text-align: center;
-    padding: 0;
+    padding: 0x;
     position: sticky;
     bottom: 0;
 }
@@ -65,27 +66,10 @@ body {
     max-width: 400px;
 }
 
-.card-header {
-    background-color: #ff9900;
-}
-
-.card-title {
-    color: white;
-}
-
-.btn-primary {
-    background-color: #ff9900;
-    border-color: #ff9900;
-}
-
-.btn-primary:hover {
-    background-color: #e68a00;
-    border-color: #e68a00;
-}
 </style>
 
 <div class="container">
-    <h1 class="text-center my-4 py-3 text-light" id="title"><i class="fas fa-boxes"></i> Inventory System</h1>
+    <h1 class="text-center my-4 py-3 text-light" id="title">Inventory System </h1>
 
     <div class="col-lg-4 col-md-10 col-sm-10 col-xs-12">
         <div class="card rounded-0 shadow">
@@ -101,15 +85,15 @@ body {
                             <?php } ?>
                         </div>
                         <div class="mb-3">
-                            <label for="email" class="control-label"><i class="fas fa-envelope"></i> Email</label>
+                            <label for="email" class="control-label">Email</label>
                             <input name="email" id="email" type="email" class="form-control rounded-0" placeholder="Email address" autofocus="" value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>" required>
                         </div>
                         <div class="mb-3">
-                            <label for="password" class="control-label"><i class="fas fa-lock"></i> Password</label>
+                            <label for="password" class="control-label">Password</label>
                             <input type="password" class="form-control rounded-0" id="password" name="pwd" placeholder="Password" required>
                         </div>
                         <div class="d-grid">
-                            <button type="submit" name="login" class="btn btn-primary rounded-0"><i class="fas fa-sign-in-alt"></i> Login</button>
+                            <button type="submit" name="login" class="btn btn-primary rounded-0">Login</button>
                         </div>
                     </form>
                     <p class="mt-3 text-center">Don't have an account? <a href="register.php">Register here</a></p>
@@ -119,5 +103,3 @@ body {
     </div>
 </div>
 
-<?php include('inc/footer.php'); ?>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">

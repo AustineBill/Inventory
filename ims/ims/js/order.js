@@ -1,6 +1,5 @@
-
-
 $(document).ready(function() {
+
     var orderData = $('#orderList').DataTable({
         "lengthChange": false,
         "processing": true,
@@ -12,15 +11,14 @@ $(document).ready(function() {
             data: { action: 'listOrder' },
             dataType: "json"
         },
-        
         "pageLength": 10,
         "columnDefs": [{
-            "target": [0, 3],
+            "target": [0, 4],
             "orderable": false
         }],
         'rowCallback': function(row, data, index) {
-            $(row).find('td').addClass('align-middle')
-            $(row).find('td:eq(0), td:eq(3)').addClass('text-center')
+            $(row).find('td').addClass('align-middle');
+            $(row).find('td:eq(0), td:eq(4)').addClass('text-center');
         },
     });
 
@@ -31,7 +29,6 @@ $(document).ready(function() {
         $('#action').val("Add");
         $('#btn_action').val("addOrder");
     });
-
 
     $(document).on('submit', '#orderForm', function(event) {
         event.preventDefault();
@@ -62,7 +59,7 @@ $(document).ready(function() {
                 $('#productViewModal').modal('show');
                 $('#productDetails').html(data);
             }
-        })
+        });
     });
 
     $(document).on('click', '.update', function() {
@@ -77,13 +74,13 @@ $(document).ready(function() {
                 $('#orderModal').modal('show');
                 $('#product').val(data.product_id);
                 $('#shipped').val(data.total_shipped);
-                $('#date').val(data.date).datepicker('update', data.date)
+                $('#date').val(data.date);
                 $('.modal-title').html("<i class='fa fa-edit'></i> Edit Order");
                 $('#order_id').val(order_id);
                 $('#action').val("Edit");
                 $('#btn_action').val("updateOrder");
             }
-        })
+        });
     });
 
     $(document).on('click', '.delete', function() {
