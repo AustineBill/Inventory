@@ -300,7 +300,7 @@ class Inventory {
 	public function getBrand(){
 		$sqlQuery = "
 			SELECT * FROM ".$this->brandTable." 
-			WHERE id = '".$_POST["name"]."'";
+			WHERE id = '".$_POST["id"]."'";
 		$result = mysqli_query($this->dbConnect, $sqlQuery);	
 		$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 		echo json_encode($row);
@@ -312,6 +312,7 @@ class Inventory {
 			echo 'Brand Update';
 		}	
 	}	
+
 	public function deleteBrand(){
 		$sqlQuery = "
 			DELETE FROM ".$this->brandTable." 
@@ -572,6 +573,7 @@ class Inventory {
 		$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 		echo json_encode($row);
 	}
+
 	public function updateSupplier() {
 		if($_POST['supplier_id']) {	
 			$sqlUpdate = "

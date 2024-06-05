@@ -36,7 +36,7 @@ $inventory->checkLogin();
 						<table id="inventoryDetails" class="table table-bordered table-striped">
 							<thead><tr>
 								<th>#</th>      
-								<th>Product/Code</th>      
+								<th>Product</th>      
 								<th>Expiration </th>      
 								<th>Starting Inventory</th> 
 								<th>Inventory Recieved</th> 									

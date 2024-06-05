@@ -2,7 +2,7 @@ $(document).ready(function() {
     $('#addSupplier').click(function() {
         $('#supplierModal').modal('show');
         $('#supplierForm')[0].reset();
-        $('.modal-title').html("<i class='fa fa-plus'></i> Add Supplier");
+        $('.modal-title').html("<i class='fa fa-plus'></i> Add Customer");
         $('#action').val("Add");
         $('#btn_action').val("addSupplier");
     });
@@ -25,7 +25,7 @@ $(document).ready(function() {
         "pageLength": 25,
         'rowCallback': function(row, data, index) {
             $(row).find('td').addClass('align-middle')
-            $(row).find('td:eq(0), td:eq(4)').addClass('text-center')
+            $(row).find('td:eq(0), td:eq(4), td:eq(4)').addClass('text-center')
         },
     });
 
@@ -48,12 +48,12 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '.update', function() {
-        var supplier_name = $(this).data("supplier_name");
+        var supplier_id = $(this).attr("id");
         var btn_action = 'getSupplier';
         $.ajax({
             url: "action.php",
             method: "POST",
-            data: { supplier_name: supplier_name, btn_action: btn_action },
+            data: { supplier_id: supplier_id, btn_action: btn_action },
             dataType: "json",
             success: function(data) {
                 $('#supplierModal').modal('show');
@@ -61,7 +61,7 @@ $(document).ready(function() {
                 $('#address').val(data.address);
                 $('#mobile').val(data.mobile);
                 $('.modal-title').html("<i class='fa fa-edit'></i> Edit Supplier");
-                $('#supplier_name_hidden').val(supplier_name); 
+                $('#supplier_id').val(supplier_id);
                 $('#action').val('Update');
                 $('#btn_action').val('updateSupplier');
             }
@@ -69,13 +69,13 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '.delete', function() {
-        var supplier_name = $(this).data("supplier_name");
+        var supplier_id = $(this).attr("id");
         var btn_action = "deleteSupplier";
         if (confirm("Are you sure you want to delete this supplier?")) {
             $.ajax({
                 url: "action.php",
                 method: "POST",
-                data: { supplier_name: supplier_name, btn_action: btn_action },
+                data: { supplier_id: supplier_id, btn_action: btn_action },
                 success: function(data) {
                     supplierDataTable.ajax.reload();
                 }
@@ -107,6 +107,7 @@ $(document).ready(function() {
     });
 
     function exportToCSV() {
+        // Logic to export data to CSV format
         var csv = '';
         var rows = $('#supplierList').find('tr');
         rows.each(function(index, row) {
@@ -120,9 +121,11 @@ $(document).ready(function() {
 
     function exportToPDF() {
         // Logic to export data to PDF format
+        // Implementation dependent on the library you choose for PDF generation
     }
 
     function exportToText() {
+        // Logic to export data to Text format
         var text = '';
         var rows = $('#supplierList').find('tr');
         rows.each(function(index, row) {
@@ -152,4 +155,3 @@ $(document).ready(function() {
         }
     }
 });
-
