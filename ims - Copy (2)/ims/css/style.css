@@ -1,0 +1,51 @@
+html,
+
+body {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.footer {
+    
+    color: rgb(235, 221, 221);
+    width: 100%;
+    text-align: center;
+    padding: 0x;
+    position: absolute;
+    bottom: 0;
+    height: 50px;
+}
+
+.navbar {
+    height:  100px;
+}
+
+.menu-container {
+    align-items: center;
+    position: absolute;
+    justify-content: center;
+    flex-direction: column;
+
+}
+
+.nav-container {
+    height: 100%;
+}
+
+#navbarNav {
+    padding-left: 40px;
+    padding-top: 60px;
+}
+
+
+.navbar-menu .nav-item a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.navbar-menu .nav-item a:visited {
+    color: dark;
+}
+
+
+

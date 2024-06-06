@@ -1,0 +1,133 @@
+<?php 
+ob_start();
+session_start();
+include('inc/header.php');
+include 'Inventory.php';
+$inventory = new Inventory();
+$inventory->checkLogin();
+?>
+
+<script src="js/jquery.dataTables.min.js"></script>
+<script src="js/dataTables.bootstrap.min.js"></script>		
+<link rel="stylesheet" href="css/dataTables.bootstrap.min.css" />
+<script src="js/brand.js"></script>
+<script src="js/common.js"></script>
+<?php include('inc/container.php');?>
+
+
+<div class="container-fluid">			
+	<div class="row">
+		<div class="col-lg-2">
+			<?php include("menus.php"); ?> 
+		</div>
+		<div class="col-lg-9" style="padding-top: 50px;">
+			<div class="card card-default rounded-0 shadow">
+				<div class="card-header bg-orange text-white">
+					<div class="row align-items-center">
+						<div class="col-lg-8">
+							<h3 class="card-title" style="color: white;"><i class="fas fa-tags"></i> Brand List</h3>
+						</div>
+						<div class="col-lg-4 text-end">
+							<button type="button" name="add" id="addBrand" class="btn btn-primary btn-sm bg-gradient rounded-0"><i class="far fa-plus-square"></i> New Brand</button>
+						</div>
+					</div>					   
+					<div class="clear:both"></div>
+				</div>
+				<div class="card-body">
+					<table id="brandList" class="table table-bordered table-striped">
+						<thead>
+							<tr>
+								<th>Category</th>
+								<th>Brand Name</th>
+								<th>Status</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- Data rows will be populated dynamically -->
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="brandModal" class="modal fade">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title"><i class="fa fa-plus"></i> Add Brand</h4>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" style="color: orange;"></button>
+				</div>
+				<div class="modal-body">
+					<form method="post" id="brandForm">
+						
+						<input type="hidden" name="btn_action" id="btn_action" />
+						<div class="mb-3">
+							<select name="categoryid" id="categoryid" class="form-select rounded-0" required>
+								<option value="">Select Category</option>
+								<?php echo $inventory->categoryDropdownList(); ?>
+							</select>
+						</div>
+						<div class="mb-3">
+							<label>Enter Brand Name</label>
+							<input type="text" name="bname" id="bname" class="form-control rounded-0" required />
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<input type="submit" name="action" id="action" class="btn btn-primary btn-sm rounded-0" value="Add" form="brandForm"/>
+					<button type="button" class="btn btn-default btn-sm rounded-0" data-bs-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+html,
+body {
+    height: 100%;
+    background-color: white; /* White background color */
+}
+
+.navbar {
+    background-color: #ff9900 !important; /* Orange background color */
+}
+
+.card-header {
+    background-color: #ff9900; /* Orange background color */
+}
+
+.card-title {
+    color: #ff9900; /* Orange font color */
+}
+
+.btn-primary {
+    background-color: #ff9900; /* Orange background color */
+    border-color: #ff9900; /* Orange border color */
+}
+
+.btn-primary:hover {
+    background-color: #e68a00; /* Darker orange on hover */
+    border-color: #e68a00; /* Darker orange on hover */
+}
+
+.btn-close {
+    color: #ff9900; /* Orange close button */
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 153, 0, 0.1); /* Light orange stripes */
+}
+
+.table-striped tbody tr:hover {
+    background-color: rgba(255, 153, 0, 0.3); /* Darker orange on hover */
+}
+
+.navbar-brand {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ff9900; /* Orange font color */
+}
+</style>
