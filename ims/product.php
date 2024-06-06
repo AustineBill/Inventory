@@ -38,10 +38,9 @@ $inventory->checkLogin();
 							<table id="productList" class="table table-bordered table-striped">
 								<thead>
 									<tr>   
-										<th>Category</th>	
-										<th>Brand Name</th>									
 										<th>Product Name</th>
 										<th>Expiration Date</th>
+										<th>Unit</th>
 										<th>Quantity</th>
 										<th>Status</th>
 										<th>Action</th>
@@ -67,25 +66,22 @@ $inventory->checkLogin();
 						<input type="hidden" name="pid" id="pid" />
 						<input type="hidden" name="btn_action" id="btn_action" />
 						<div class="form-group">
-							<label>Select Category</label>
-							<select name="categoryid" id="categoryid" class="form-select rounded-0" required>
-								<option value="">Select Category</option>
-								<?php echo $inventory->categoryDropdownList();?>
+							<label>Product Type</label>
+							<select name="ptype" id="ptype" class="form-select rounded-0" required>
+								<option value="">Select Product</option>
+								<option value="Desserts">Desserts</option>
+								<option value="Beverages">Beverages</option>
+								<option value="Drinks">Drinks</option>
+								<option value="Snacks">Snacks</option>
+								<option value="Meal">Meal</option>
 							</select>
-						</div>
-						<div class="form-group">
-							<label>Select Brand</label>
-							<select name="brandid" id="brandid" class="form-select rounded-0" required>
-								<option value="">Select Brand</option>
-							</select>
-						</div>
-						<div class="form-group">
+
 							<label>Product Name</label>
-							<input type="text" name="pname" id="pname" class="form-control rounded-0" required />
+								<input type="text" name="pname" id="pname" class="form-control rounded-0" required />
 						</div>
 						<div class="form-group">
-							<label>Product Model</label>
-							<input type="date" name="date" id="date" class="form-control rounded-0" required />
+							<label>Expiration Date</label>
+							<input type="date" name="pexpire" id="pexpire" class="form-control rounded-0" required />
 						</div>
 						<div class="form-group">
 							<label>Product Description</label>
@@ -94,20 +90,15 @@ $inventory->checkLogin();
 						<div class="form-group">
 							<label>Product Quantity</label>
 							<div class="input-group">
-								<input type="text" name="quantity" id="quantity" class="form-control rounded-0" required pattern="[+-]?([0-9]*[.])?[0-9]+" /> 
+								<input type="text" name="quantity" id="quantity" class="form-control rounded-0" required  /> 
 								<select name="unit" class="form-select rounded-0" id="unit" required>
 									<option value="">Select Unit</option>
-									<!-- Units will be populated by JavaScript -->
 								</select>
 							</div>
 						</div>
 						<div class="form-group">
 							<label>Product Base Price</label>
-							<input type="text" name="base_price" id="base_price" class="form-control rounded-0" required pattern="[+-]?([0-9]*[.])?[0-9]+" />
-						</div>
-						<div class="form-group">
-							<label>Product Tax (%)</label>
-							<input type="text" name="tax" id="tax" class="form-control rounded-0" required pattern="[+-]?([0-9]*[.])?[0-9]+" />
+							<input type="text" name="base_price" id="base_price" class="form-control rounded-0" required  />
 						</div>
 					</form>
 				</div>
@@ -142,14 +133,13 @@ $inventory->checkLogin();
 <?php include('inc/footer.php');?>
 
 <style>
-html,
-body {
+html, body {
     height: 100%;
     background-color: white; /* White background color */
 }
 
 .navbar {
-    background-color: #ff9900 !important; /* White background color */
+    background-color: #ff9900 !important; /* Orange background color */
 }
 
 .card-header {

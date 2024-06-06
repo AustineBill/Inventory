@@ -290,6 +290,7 @@ class Inventory {
 		}
 		return $categoryHTML;
 	}
+
 	public function saveBrand() {		
 		$sqlInsert = "
 			INSERT INTO ".$this->brandTable."(categoryid, bname) 
@@ -348,23 +349,18 @@ class Inventory {
 
 	// Product management 
 	public function getProductList() {
-		$sqlQuery = "SELECT p.*, b.bname, c.name as category_name
-					 FROM ".$this->productTable." as p
-					 INNER JOIN ".$this->brandTable." as b ON b.id = p.brandid
-					 INNER JOIN ".$this->categoryTable." as c ON c.categoryid = p.categoryid";
+		$sqlQuery = "SELECT * FROM ".$this->productTable;
 	
 		if (isset($_POST["search"]["value"])) {
-			$sqlQuery .= ' WHERE (b.bname LIKE "%'.$_POST["search"]["value"].'%" ';
-			$sqlQuery .= ' OR c.name LIKE "%'.$_POST["search"]["value"].'%" ';
-			$sqlQuery .= ' OR p.pname LIKE "%'.$_POST["search"]["value"].'%" ';
-			$sqlQuery .= ' OR p.quantity LIKE "%'.$_POST["search"]["value"].'%" ';
-			$sqlQuery .= ' OR p.pid LIKE "%'.$_POST["search"]["value"].'%") ';
+			$sqlQuery .= ' WHERE pname LIKE "%'.$_POST["search"]["value"].'%" ';
+			$sqlQuery .= ' OR quantity LIKE "%'.$_POST["search"]["value"].'%" ';
+			$sqlQuery .= ' OR pid LIKE "%'.$_POST["search"]["value"].'%" ';
 		}
 	
 		if (isset($_POST['order'])) {
 			$sqlQuery .= ' ORDER BY '.$_POST['order']['0']['column'].' '.$_POST['order']['0']['dir'].' ';
 		} else {
-			$sqlQuery .= ' ORDER BY p.pid DESC ';
+			$sqlQuery .= ' ORDER BY pid DESC ';
 		}
 	
 		if ($_POST['length'] != -1) {
@@ -390,10 +386,9 @@ class Inventory {
 				'<span class="label label-danger">Inactive</span>';
 	
 			$productRow = array();
-			$productRow[] = $product['category_name'];
-			$productRow[] = $product['bname'];
 			$productRow[] = $product['pname'];
-			$productRow[] = $product['model'];
+			$productRow[] = $product['expire'];
+			$productRow[] = $product['unit'];
 			$productRow[] = $product["quantity"];
 			$productRow[] = $status;
 			$productRow[] = '<div class="btn-group btn-group-sm"><button type="button" name="view" id="'.$product["pid"].'" class="btn btn-light bg-gradient border text-dark btn-sm rounded-0 view" title="View"><i class="fa fa-eye"></i></button><button type="button" name="update" id="'.$product["pid"].'" class="btn btn-primary btn-sm rounded-0 update" title="Update"><i class="fa fa-edit"></i></button><button type="button" name="delete" id="'.$product["pid"].'" class="btn btn-danger btn-sm rounded-0 delete" data-status="'.$product["status"].'" title="Delete"><i class="fa fa-trash"></i></button></div>';
@@ -410,59 +405,61 @@ class Inventory {
 		echo json_encode($outputData);
 	}
 	
+	public function addProduct() {
+		// Check if the product with the same name and unit already exists
+		$checkQuery = "
+			SELECT * FROM ".$this->productTable." 
+			WHERE pname = '".$_POST['pname']."' 
+			AND unit = '".$_POST['unit']."'";
+		$checkResult = mysqli_query($this->dbConnect, $checkQuery);
+		
+		if (mysqli_num_rows($checkResult) > 0) {
+			// Product already exists
+			echo 'Error: Product with the same name and unit already exists.';
+		} else {
+			// Insert the new product
+			$sqlInsert = "
+				INSERT INTO ".$this->productTable." (pname, expire, description, quantity, unit, base_price, minimum_order) 
+				VALUES ('".$_POST['pname']."', '".$_POST['expire']."', '".$_POST['description']."', '".$_POST['quantity']."', '".$_POST['unit']."', '".$_POST['base_price']."', 1)";
+			mysqli_query($this->dbConnect, $sqlInsert);
+			echo 'New Product Added';
+		}
+	}
 	
-	public function addProduct() {		
-		$sqlInsert = "
-			INSERT INTO ".$this->productTable."(categoryid, brandid, pname, model, description, quantity, unit, base_price, tax, minimum_order) 
-			VALUES ('".$_POST["categoryid"]."', '".$_POST['brandid']."', '".$_POST['pname']."', '".$_POST['pmodel']."', '".$_POST['description']."', '".$_POST['quantity']."', '".$_POST['unit']."', '".$_POST['base_price']."', '".$_POST['tax']."', 1)";		
-		mysqli_query($this->dbConnect, $sqlInsert);
-		echo 'New Product Added';
-	}	
 	public function getProductDetails(){
 		$sqlQuery = "
 			SELECT * FROM ".$this->productTable." 
 			WHERE pid = '".$_POST["pid"]."'";
-
-		$result = mysqli_query($this->dbConnect, $sqlQuery);			
-		while( $product = mysqli_fetch_assoc($result)) {
-			
-			$output['categoryid'] = $product['categoryid'];
-			$output['brandid'] = $product['brandid'];
-			$output["brand_select_box"] = $this->getCategoryBrand($product['categoryid']);
-			$output['pname'] = $product['pname'];
-			$output['model'] = $product['model'];
-			$output['description'] = $product['description'];
-			$output['quantity'] = $product['quantity'];
-			$output['unit'] = $product['unit'];
-			$output['base_price'] = $product['base_price'];
-			$output['tax'] = $product['tax'];
-			
-		}
-		echo json_encode($output);
+		$result = mysqli_query($this->dbConnect, $sqlQuery);	
+		$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+		echo json_encode($row);
+		
 	}
+	
 	public function updateProduct() {		
-		if($_POST['pid']) {	
+		if(isset($_POST['pid'])) {	
 			$sqlUpdate = "UPDATE ".$this->productTable." 
-				SET categoryid = '".$_POST['categoryid']."', brandid='".$_POST['brandid']."', pname='".$_POST['pname']."', model='".$_POST['pmodel']."', description='".$_POST['description']."', quantity='".$_POST['quantity']."', unit='".$_POST['unit']."', base_price='".$_POST['base_price']."', tax='".$_POST['tax']."' WHERE pid = '".$_POST["pid"]."'";			
+				SET pname='".$_POST['pname']."', expire='".$_POST['pexpire']."', description='".$_POST['description']."', quantity='".$_POST['quantity']."', unit='".$_POST['unit']."', base_price='".$_POST['base_price']."' WHERE pid = '".$_POST["pid"]."'";			
 			mysqli_query($this->dbConnect, $sqlUpdate);	
-			echo 'Product Update';
-		}	
-	}	
+			echo 'Product Updated';
+		} else {
+			echo 'Error: Product ID not provided';
+		}
+	}
+	
 	public function deleteProduct(){
 		$sqlQuery = "
 			DELETE FROM ".$this->productTable." 
 			WHERE pid = '".$_POST["pid"]."'";	
 		mysqli_query($this->dbConnect, $sqlQuery);		
 	}	
+	
 	public function viewProductDetails(){
 		$sqlQuery = "SELECT * FROM ".$this->productTable." as p
-			INNER JOIN ".$this->brandTable." as b ON b.id = p.brandid
-			INNER JOIN ".$this->categoryTable." as c ON c.categoryid = p.categoryid 
-			
 			WHERE p.pid = '".$_POST["pid"]."'";
 		$result = mysqli_query($this->dbConnect, $sqlQuery);
 		$productDetails = '<div class="table-responsive">
-				<table class="table table-boredered">';
+				<table class="table table-bordered">';
 		while( $product = mysqli_fetch_assoc($result) ) {
 			$status = '';
 			if($product['status'] == 'active') {
@@ -476,21 +473,13 @@ class Inventory {
 				<td>'.$product["pname"].'</td>
 			</tr>
 			<tr>
-				<td>Product Model</td>
-				<td>'.$product["model"].'</td>
+				<td>Expiration Date</td>
+				<td>'.$product["expire"].'</td>
 			</tr>
 			<tr>
 				<td>Product Description</td>
 				<td>'.$product["description"].'</td>
 			</tr>
-			<tr>
-				<td>Category</td>
-				<td>'.$product["name"].'</td>
-			</tr>
-			<tr>
-				<td>Brand</td>
-				<td>'.$product["bname"].'</td>
-			</tr>			
 			<tr>
 				<td>Available Quantity</td>
 				<td>'.$product["quantity"].' '.$product["unit"].'</td>
@@ -499,11 +488,6 @@ class Inventory {
 				<td>Base Price</td>
 				<td>'.$product["base_price"].'</td>
 			</tr>
-			<tr>
-				<td>Tax (%)</td>
-				<td>'.$product["tax"].'</td>
-			</tr>
-			
 			<tr>
 				<td>Status</td>
 				<td>'.$status.'</td>
@@ -516,6 +500,7 @@ class Inventory {
 		';
 		echo $productDetails;
 	}
+	
 	// supplier 
 	public function getSupplierList(){		
 		$sqlQuery = "SELECT * FROM ".$this->supplierTable." ";
@@ -589,6 +574,18 @@ class Inventory {
 			WHERE supplier_id = '".$_POST['supplier_id']."'";		
 		mysqli_query($this->dbConnect, $sqlQuery);		
 	}
+
+
+	public function OrderDropdownList(){	
+		$sqlQuery = "SELECT * FROM ".$this->productTable." ORDER BY pname ASC";
+		$result = mysqli_query($this->dbConnect, $sqlQuery);
+		$dropdownHTML = '';
+		while( $product = mysqli_fetch_assoc($result) ) {	
+			$dropdownHTML .= '<option value="'.$product["pid"].'">'.$product["pname"].'</option>';
+		}
+		return $dropdownHTML;
+	}
+
 	// purchase
 	public function listPurchase(){		
 		$sqlQuery = "SELECT ph.*, p.pname, s.supplier_name FROM ".$this->purchaseTable." as ph
@@ -661,8 +658,8 @@ class Inventory {
 			WHERE purchase_id = '".$_POST['purchase_id']."'";		
 		mysqli_query($this->dbConnect, $sqlQuery);		
 	}
+	
 	// order
-
 	public function listOrders() {
 		$sqlQuery = "SELECT * FROM ".$this->orderTable." as o
 			INNER JOIN ".$this->productTable." as p ON p.pid = o.product_id ";
@@ -703,14 +700,21 @@ class Inventory {
 		mysqli_query($this->dbConnect, $sqlInsert);
 		echo 'New order added';
 	}		
-	public function getOrderDetails(){
+	public function getOrderDetails() {
+		$order_id = mysqli_real_escape_string($this->dbConnect, $_POST["order_id"]);
+	
 		$sqlQuery = "
-			SELECT * FROM ".$this->orderTable." 
-			WHERE order_id = '".$_POST["order_id"]."'";
-		$result = mysqli_query($this->dbConnect, $sqlQuery);	
-		$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-		echo json_encode($row);
+			SELECT * FROM " . $this->orderTable . " 
+			WHERE order_id = '$order_id'";
+		$result = mysqli_query($this->dbConnect, $sqlQuery);
+		if ($result) {
+			$row = mysqli_fetch_assoc($result);
+			echo json_encode($row);
+		} else {
+			echo "Error: " . mysqli_error($this->dbConnect);
+		}
 	}
+
 	public function updateOrder() {
 		if($_POST['order_id']) {	
 			$sqlUpdate = "
@@ -727,76 +731,67 @@ class Inventory {
 		mysqli_query($this->dbConnect, $sqlQuery);		
 	}
 
-
-	public function customerDropdownList(){	
-		$sqlQuery = "SELECT * FROM ".$this->customerTable." ORDER BY name ASC";
-		$result = mysqli_query($this->dbConnect, $sqlQuery);
-		$dropdownHTML = '';
-		while( $customer = mysqli_fetch_assoc($result) ) {	
-			$dropdownHTML .= '<option value="'.$customer["id"].'">'.$customer["name"].'</option>';
-		}
-		return $dropdownHTML;
-	}
-	public function getInventoryDetails(){		
-		$sqlQuery = "SELECT p.pid, p.pname, p.model, p.quantity as product_quantity, s.quantity as recieved_quantity, r.total_shipped
-			FROM ".$this->productTable." as p
-			LEFT JOIN ".$this->purchaseTable." as s ON s.product_id = p.pid
-			LEFT JOIN ".$this->orderTable." as r ON r.product_id = p.pid ";		
+	public function getInventoryDetails() {		
+		$sqlQuery = "SELECT p.pid, p.pname, p.expire, (p.quantity) AS product_quantity, 
+					(s.quantity) AS received_quantity, SUM(r.total_shipped) AS total_shipped
+					FROM ".$this->productTable." as p
+					LEFT JOIN ".$this->purchaseTable." as s ON s.product_id = p.pid
+					LEFT JOIN ".$this->orderTable." as r ON r.product_id = p.pid 
+					GROUP BY p.pid, p.pname, p.expire";	
+	
 		if(isset($_POST['order'])) {
-			$sqlQuery .= 'ORDER BY '.$_POST['order']['0']['column'].' '.$_POST['order']['0']['dir'].' ';
+			$sqlQuery .= ' ORDER BY '.$_POST['order']['0']['column'].' '.$_POST['order']['0']['dir'].' ';
 		} else {
-			$sqlQuery .= 'ORDER BY p.pid DESC ';
+			$sqlQuery .= ' ORDER BY p.pid DESC ';
 		}
+	
 		if($_POST['length'] != -1) {
-			$sqlQuery .= 'LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
+			$sqlQuery .= ' LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
 		}		
+	
 		$result = mysqli_query($this->dbConnect, $sqlQuery);
 		$numRows = mysqli_num_rows($result);
 		$inventoryData = array();	
 		$i = 1;
+	
 		while( $inventory = mysqli_fetch_assoc($result) ) {	
-
-			if(!$inventory['recieved_quantity']) {
-				$inventory['recieved_quantity'] = 0;
+	
+			if(!$inventory['received_quantity']) {
+				$inventory['received_quantity'] = 0;
 			}
 			if(!$inventory['total_shipped']) {
 				$inventory['total_shipped'] = 0;
 			}
-			
-			$inventoryInHand = ($inventory['product_quantity'] + $inventory['recieved_quantity']) - $inventory['total_shipped'];
-
-
+	
+			$inventoryInHand = ($inventory['product_quantity'] + $inventory['received_quantity']) - $inventory['total_shipped'];
+	
 			$expirationDate = strtotime('+5 days');
 			$expirationMessage = '';
-			if ($inventory['model'] != null && strtotime($inventory['model']) <= $expirationDate) {
+			if ($inventory['expire'] != null && strtotime($inventory['expire']) <= $expirationDate) {
 				$expirationMessage = 'Expiration date is within 5 days.';
 			}
-		
+	
 			$inventoryRow = array();
 			$inventoryRow[] = $i++;
-			//$inventoryRow[] = "<div class='lh-1'><div>{$inventory['pname']}</div><div class='fw-bolder text-muted'><small>{$inventory['model']}</small></div></div>";
 			$inventoryRow[] = $inventory['pname'];
-			$inventoryRow[] = $inventory['model'];
+			$inventoryRow[] = $inventory['expire'];
 			$inventoryRow[] = $inventory['product_quantity'];
-			$inventoryRow[] = $inventory['recieved_quantity'];	
+			$inventoryRow[] = $inventory['received_quantity'];    
 			$inventoryRow[] = $inventory['total_shipped'];
 			$inventoryRow[] = $inventoryInHand;		
-				
 			$inventoryData[] = $inventoryRow;						
 		}
+	
 		$output = array(
 			"draw"				=>	intval($_POST["draw"]),
 			"recordsTotal"  	=>  $numRows,
 			"recordsFiltered" 	=> 	$numRows,
 			"data"    			=> 	$inventoryData
 		);
+	
 		echo json_encode($output);	
-
-		if (!empty($productsToAlert)) {
-			echo "<script>alert('The following products have expiration dates within 5 days: " . implode(', ', $productsToAlert) . "');</script>";
-		}
 	}
-
+	
 	
 }
 ?>

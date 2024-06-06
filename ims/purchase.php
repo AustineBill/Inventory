@@ -73,7 +73,7 @@ $inventory->checkLogin();
 						<div class="form-group">
 							<label>Product Quantity</label>
 							<div class="input-group">
-								<input type="text" name="quantity" id="quantity" class="form-control rounded-0" required pattern="[+-]?([0-9]*[.])?[0-9]+" />        
+								<input type="text" name="quantity" id="quantity" class="form-control rounded-0" required />        
 							</div>
 						</div>                           
 						<div class="form-group">

@@ -1,11 +1,10 @@
 $(document).ready(function() {
-    const categoryUnits = {
-        
+    const ProductUnits = {
         'Beverages': ['Ml', 'Liters', 'Packets', 'Bottles'],
-        'Snacks': ['Small-size', 'Medium-size', 'Large-size'],
-        'Drinks': ['Small-size', 'Medium-size', 'Large-size'],
-        'Food': ['Small-size', 'Medium-size', 'Large-size', 'ExtraLarge-size'],
-        
+        'Desserts': ['Grams', 'Pieces'],
+        'Drinks': ['Ml', 'Liters', 'Cans'],
+        'Snacks': ['Grams', 'Packets'],
+        'Meal': ['Grams', 'Packets', 'Plates'],
     };
 
     $('#addProduct').click(function() {
@@ -30,31 +29,19 @@ $(document).ready(function() {
             dataType: "json"
         },
         "columnDefs": [{
-            "targets": [0, 6],
+            "targets": [0, 4],
             "orderable": false,
         }],
         "pageLength": 9,
         'rowCallback': function(row, data, index) {
             $(row).find('td').addClass('align-middle')
-            $(row).find('td:eq(0), td:eq(7)').addClass('text-center')
+            $(row).find('td:eq(0), td:eq(6)').addClass('text-center')
         },
     });
 
-    $(document).on('change', '#categoryid', function() {
-        var categoryid = $('#categoryid').val();
-        var btn_action = 'getCategoryBrand';
-        $.ajax({
-            url: "action.php",
-            method: "POST",
-            data: { categoryid: categoryid, btn_action: btn_action },
-            success: function(data) {
-                $('#brandid').html(data);
-            }
-        });
-
-        // Update the units dropdown based on the selected category
-        let selectedCategory = $(this).find("option:selected").text();
-        let units = categoryUnits[selectedCategory] || [];
+    $(document).on('change', '#ptype', function() {
+        var selectedProduct = $(this).find("option:selected").text();
+        let units = ProductUnits[selectedProduct] || [];
         let unitDropdown = $('#unit');
 
         // Clear existing options
@@ -62,10 +49,10 @@ $(document).ready(function() {
         unitDropdown.append('<option value="">Select Unit</option>');  // Add default option
 
         if (units.length === 0) {
-            // If no units available for the selected category, disable the dropdown
+            // If no units available for the selected product, disable the dropdown
             unitDropdown.prop('disabled', true);
         } else {
-            // Populate units based on the selected category
+            // Populate units based on the selected product
             unitDropdown.prop('disabled', false);
             units.forEach(function(unit) {
                 unitDropdown.append('<option value="' + unit + '">' + unit + '</option>');
@@ -73,10 +60,23 @@ $(document).ready(function() {
         }
      });
 
-    $(document).on('submit', '#productForm', function(event) {
+     $(document).on('submit', '#productForm', function(event) {
         event.preventDefault();
         $('#action').attr('disabled', 'disabled');
         var formData = $(this).serialize();
+        var pid = $('#pid').val();
+    
+        // Check if the product already exists
+        var pname = $('#pname').val();
+        var unit = $('#unit').val();
+    
+        if (productAlreadyExists(pname, unit, pid)) {
+            alert('Warning: Product with the same name and unit already exists.');
+            $('#action').attr('disabled', false);
+            return;
+        }
+    
+        // Proceed with adding the product
         $.ajax({
             url: "action.php",
             method: "POST",
@@ -87,8 +87,19 @@ $(document).ready(function() {
                 $('#action').attr('disabled', false);
                 productData.ajax.reload();
             }
-        })
+        });
     });
+    
+    function productAlreadyExists(productName, productUnit, productId) {
+        var rows = productData.rows().data();
+        for (var i = 0; i < rows.length; i++) {
+            var row = rows[i];
+            if (row[0] === productName && row[2] === productUnit && row[7] != productId) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     $(document).on('click', '.view', function() {
         var pid = $(this).attr("id");
@@ -114,23 +125,21 @@ $(document).ready(function() {
             dataType: "json",
             success: function(data) {
                 $('#productModal').modal('show');
-                $('#categoryid').val(data.categoryid);
-                $('#brandid').html(data.brand_select_box);
-                $('#brandid').val(data.brandid);
+                
                 $('#pname').val(data.pname);
-                $('#pmodel').val(data.model);
+                $('#pexpire').val(data.expire);
                 $('#description').val(data.description);
                 $('#quantity').val(data.quantity);
                 $('#base_price').val(data.base_price);
-                $('#tax').val(data.tax);
+              
                 $('.modal-title').html("<i class='fa fa-edit'></i> Edit Product");
                 $('#pid').val(pid);
                 $('#action').val("Edit");
                 $('#btn_action').val("updateProduct");
 
-                // Populate the units dropdown based on the selected category for editing
-                let selectedCategory = $('#categoryid option:selected').text();
-                let units = categoryUnits[selectedCategory] || [];
+                // Populate the units dropdown based on the selected product for editing
+                let selectedProduct = $('#pname option:selected').text();
+                let units = ProductUnits[selectedProduct] || [];
                 let unitDropdown = $('#unit');
                 unitDropdown.empty();
                 unitDropdown.append('<option value="">Select Unit</option>');  // Add default option

@@ -64,7 +64,7 @@ $inventory->checkLogin();
                                     <label>Product Name</label>
                                     <select name="product" id="product" class="form-select rounded-0" required>
                                         <option value="">Select Product</option>
-                                        <?php echo $inventory->productDropdownList();?>
+                                        <?php echo $inventory->OrderDropdownList();?>
                                     </select>
                                 </div>
                                 <div class="mb-3">
